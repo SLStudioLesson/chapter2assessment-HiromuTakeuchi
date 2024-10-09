@@ -1,6 +1,11 @@
 package data;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class RecipeFileHandler {
@@ -16,19 +21,27 @@ public class RecipeFileHandler {
 
     /**
      * 設問1: 一覧表示機能
-     * recipes.txtからレシピデータを読み込み、それをリスト形式で返します。 <br> 
+     * recipes.txtからレシピデータを読み込み、それをリスト形式で返します。 <br>
      * IOExceptionが発生したときは<i>Error reading file: 例外のメッセージ</i>とコンソールに表示します。
      *
      * @return レシピデータ
      */
+     // recipes.txtからレシピデータを読み込み、それをリスト形式で返すメソッド
     public ArrayList<String> readRecipes() {
-        // try {
+    ArrayList<String> recipes = new ArrayList<>();
 
-        // } catch (IOException e) {
-        //     System.out.println("Error reading file:" + e.getMessage());
-        // }
-        return null;
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+            getClass().getClassLoader().getResourceAsStream("recipes.txt")))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            recipes.add(line);
+        }
+    } catch (IOException e) {
+        System.out.println("Error reading file: " + e.getMessage());
     }
+
+    return recipes;
+}
 
     /**
      * 設問2: 新規登録機能
@@ -40,10 +53,14 @@ public class RecipeFileHandler {
      */
      // 
     public void addRecipe(String recipeName, String ingredients) {
-        // try {
-
-        // } catch (IOException e) {
-
-        // }
+        // ファイルにレシピを追記するための準備
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            // レシピ名と材料をカンマ区切りで1行としてファイルに追加
+            writer.write(recipeName + "," + ingredients);
+            writer.newLine();  // 新しい行を追加
+        } catch (IOException e) {
+            // ファイル書き込み時に例外が発生した場合のエラーメッセージ
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
     }
 }
